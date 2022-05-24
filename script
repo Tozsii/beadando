@@ -1,0 +1,40 @@
+
+#!/bin/bash
+curlf(){
+curl http://api.citybik.es/v2/networks -o e.json
+}
+
+filter(){
+n=$(cat e.json | jq ".networks | length") 
+for i in $(seq 0 1 $(($n-1)))
+do 
+cat e.json | jq .networks[$i].company[0] | tr -d \"
+done
+}
+
+help(){
+cat << END
+$0 [Opciók]
+
+Opciók:
+-c Letölti a fájlt.
+-f Szűrje le a fájlt.
+-h Segítség.
+END
+} 
+
+
+
+while getopts :cfh opt
+do
+
+case $opt in 
+c) curlf;;
+f) filter;;
+h) help;;
+*) echo "Ilyen opció nincs!";;
+
+esac
+done
+
+
